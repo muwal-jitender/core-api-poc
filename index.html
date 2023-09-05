@@ -139,17 +139,10 @@
           data = { abstract };
         }
 
-        const token = "ApwRzObYI78mxvKXeMWS491yLcZrC5Eg";
-
         // Create the request configuration
         const requestOptions = {
           method: "post",
-          url: "https://api.core.ac.uk/v3/recommend",
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-           "Access-Control-Allow-Origin": "*",
-          },
+          url: "https://core-server-api-10cd364b37d7.herokuapp.com/",
           data: data,
         };
 
