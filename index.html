@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Core API POC</title>
+    <style>
+      /* Add your CSS styles here */
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .input-container {
+        margin-bottom: 20px;
+      }
+      label {
+        display: inline-block;
+        width: 150px;
+        text-align: right;
+      }
+      #result-container {
+        margin: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      #input-table td {
+        border: 0px;
+      }
+      #result-grid tr {
+        vertical-align: text-top;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Core API POC</h1>
+
+    <div class="input-container">
+      <table id="input-table" style="border: none">
+        <tr>
+          <td style="text-align: right"><label for="title">Title:</label></td>
+          <td>
+            <input
+              type="text"
+              id="title"
+              placeholder="Enter Title"
+              style="width: 750px"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: right">
+            <label for="abstract">Abstract:</label>
+          </td>
+          <td>
+            <textarea
+              id="abstract"
+              name="abstract"
+              placeholder="Enter Abstract"
+              rows="6"
+              cols="100"
+            ></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><button id="submit-button">Submit</button></td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="result-container">
+      <h2>Results:</h2>
+      <table id="result-grid">
+        <thead>
+          <tr>
+            <th>Authors</th>
+            <th>Contributors</th>
+            <th>Title</th>
+            <th>Abstract</th>
+            <th>Document Type</th>
+            <th>DOI</th>
+            <th>Tags</th>
+            <th>Year Published</th>
+            <th>Download URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Result rows will be added here -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- <script src="script.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const titleInput = document.getElementById("title");
+        const abstractInput = document.getElementById("abstract");
+        const submitButton = document.getElementById("submit-button");
+
+        submitButton.addEventListener("click", () => {
+          const title = titleInput.value;
+          const abstract = abstractInput.value;
+          // Mock data for testing
+          makePostRequest(title, abstract);
+        });
+      });
+
+      // Function to make a POST request
+      function makePostRequest(title, abstract) {
+        let data;
+        if (!title && !abstract) return;
+        else if (title && abstract) {
+          data = {
+            title,
+            abstract,
+          };
+        } else if (title) {
+          data = { title };
+        } else {
+          data = { abstract };
+        }
+
+        const token = "ApwRzObYI78mxvKXeMWS491yLcZrC5Eg";
+
+        // Create the request configuration
+        const requestOptions = {
+          method: "post",
+          url: "https://api.core.ac.uk/v3/recommend",
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          data: data,
+        };
+
+        // Make the POST request
+        axios(requestOptions)
+          .then((response) => {
+            showData(response.data);
+            //return response.json();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function showData(data) {
+        const resultTableBody = document.querySelector("#result-grid tbody");
+        // Clear existing rows in the result table
+        resultTableBody.innerHTML = "";
+        // Iterate through the API response and add rows to the table
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+
+          const authorCell = document.createElement("td");
+          const contributorCell = document.createElement("td");
+          const abstractCell = document.createElement("td");
+          const documentTypeCell = document.createElement("td");
+          const doiCell = document.createElement("td");
+          const titleCell = document.createElement("td");
+          const tagsCell = document.createElement("td");
+          const yearPublishedCell = document.createElement("td");
+          const downloadUrlCell = document.createElement("td");
+
+          const anchorTag = document.createElement("a");
+          anchorTag.textContent = "Download PDF"; // You can set any text you want for the link
+          anchorTag.href = item.downloadUrl;
+          anchorTag.target = "_blank"; // Opens the link in a new tab
+
+          authorCell.textContent = item.authors.map((x) => x.name).join(", ");
+          contributorCell.textContent = item.contributors.join(", ");
+          titleCell.textContent = item.title;
+          abstractCell.textContent = item.abstract;
+          documentTypeCell.textContent = item.documentType;
+          doiCell.textContent = item.doi;
+          tagsCell.textContent = item.tags.join(", ");
+          yearPublishedCell.textContent = item.yearPublished;
+          downloadUrlCell.appendChild(anchorTag);
+
+          row.appendChild(authorCell);
+          row.appendChild(contributorCell);
+          row.appendChild(titleCell);
+          row.appendChild(abstractCell);
+          row.appendChild(documentTypeCell);
+          row.appendChild(doiCell);
+          row.appendChild(tagsCell);
+          row.appendChild(yearPublishedCell);
+          row.appendChild(downloadUrlCell);
+          resultTableBody.appendChild(row);
+        });
+      }
+    </script>
+  </body>
+</html>

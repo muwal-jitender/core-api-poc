@@ -1,0 +1,43 @@
+/* Add your CSS styles here */
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+.input-container {
+  margin-bottom: 20px;
+}
+/* 
+label,
+input,
+button {
+  display: block;
+  margin: 10px;
+} */
+label {
+  display: inline-block;
+  width: 150px;
+  text-align: right;
+}
+#result-container {
+  margin: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table,
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
